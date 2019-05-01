@@ -25,12 +25,25 @@ VendingMachine.prototype.receiveMoney = function(coinType) {
   }
 };
 
-VendingMachine.prototype.sellItem = function(item) {
-  for (object of this.items) {
-    if (item === object.type) {
-      this.balance += this.items.selector;
+VendingMachine.prototype.sellItem = function(selector) {
+  for (item of this.items) {
+    if (selector === item.selector) {
+      this.balance -= item.price;
+      item.count -= 1;
     }
   }
+};
+
+VendingMachine.prototype.returnMoney = function() {
+  this.balance = 0;
+};
+
+VendingMachine.prototype.checkStockCount = function() {
+  const stockCount = 0;
+  for (let item in this.items) {
+    stockCount += item.count;
+  }
+  return stockCount;
 };
 
 let assert = require("assert");
@@ -48,6 +61,33 @@ describe("Vending Machine", function() {
       machine = new VendingMachine();
       machine.receiveMoney("nickle");
       assert.strictEqual(5, machine.getBalance());
+    });
+  });
+
+  describe("Sell Item", function() {
+    it("minus item price from balance", function() {
+      machine = new VendingMachine();
+      machine.receiveMoney("dollar");
+      machine.receiveMoney("quarter");
+      machine.sellItem("B");
+      assert.strictEqual(25, machine.getBalance());
+    });
+  });
+
+  describe("coin return", function() {
+    it("return all money", function() {
+      machine = new VendingMachine();
+      machine.receiveMoney("dollar");
+      machine.receiveMoney("quarter");
+      machine.returnMoney();
+      assert.strictEqual(0, machine.getBalance());
+    });
+  });
+
+  describe("check stock count", function() {
+    xit("counts number of stock", function() {
+      machine = new VendingMachine();
+      assert.strictEqual(2, machine.checkStockCount());
     });
   });
 });
